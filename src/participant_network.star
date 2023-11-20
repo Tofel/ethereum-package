@@ -97,7 +97,7 @@ def launch_participant_network(
         and network_params.electra_fork_epoch == None
     ):
         ethereum_genesis_generator_image = (
-            "ethpandaops/ethereum-genesis-generator:2.0.4"
+            "tofelb/ethereum-genesis-generator:2.0.4-slots-per-epoch"
         )
     # we are running electra - experimental
     elif network_params.electra_fork_epoch != None:
@@ -121,6 +121,7 @@ def launch_participant_network(
         network_params.network_id,
         network_params.deposit_contract_address,
         network_params.seconds_per_slot,
+        network_params.slots_per_epoch,
         network_params.preregistered_validator_keys_mnemonic,
         total_number_of_validator_keys,
         network_params.genesis_delay,

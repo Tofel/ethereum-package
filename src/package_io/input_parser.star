@@ -164,6 +164,7 @@ def input_parser(plan, input_args):
                 "deposit_contract_address"
             ],
             seconds_per_slot=result["network_params"]["seconds_per_slot"],
+            slots_per_epoch=result["network_params"]["slots_per_epoch"],
             genesis_delay=result["network_params"]["genesis_delay"],
             max_churn=result["network_params"]["max_churn"],
             ejection_balance=result["network_params"]["ejection_balance"],
@@ -320,6 +321,9 @@ def parse_network_params(input_args):
     if result["network_params"]["seconds_per_slot"] == 0:
         fail("seconds_per_slot is 0 needs to be > 0 ")
 
+    if result["network_params"]["slots_per_epoch"] == 0:
+        fail("slots_per_epoch is 0 needs to be > 0 ")        
+
     if result["network_params"]["genesis_delay"] == 0:
         fail("genesis_delay is 0 needs to be > 0 ")
 
@@ -391,6 +395,7 @@ def default_network_params():
         "network_id": "3151908",
         "deposit_contract_address": "0x4242424242424242424242424242424242424242",
         "seconds_per_slot": 12,
+        "slots_per_epoch": 6,
         "genesis_delay": 120,
         "max_churn": 8,
         "ejection_balance": 16000000000,

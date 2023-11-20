@@ -48,8 +48,7 @@ VALIDATOR_MAX_CPU = 300
 VALIDATOR_MIN_MEMORY = 64
 VALIDATOR_MAX_MEMORY = 256
 
-
-MIN_PEERS = 1
+MIN_PEERS = 0
 
 PRIVATE_IP_ADDRESS_PLACEHOLDER = "KURTOSIS_IP_ADDR_PLACEHOLDER"
 
@@ -184,22 +183,27 @@ def launch(
             validator_node_service_name, validator_config
         )
 
-    # TODO(old) add validator availability using the validator API: https://ethereum.github.io/beacon-APIs/?urls.primaryName=v1#/ValidatorRequiredApi | from eth2-merge-kurtosis-module
-    beacon_node_identity_recipe = GetHttpRequestRecipe(
-        endpoint="/eth/v1/node/identity",
-        port_id=HTTP_PORT_ID,
-        extract={
-            "enr": ".data.enr",
-            "multiaddr": ".data.discovery_addresses[0]",
-            "peer_id": ".data.peer_id",
-        },
-    )
-    response = plan.request(
-        recipe=beacon_node_identity_recipe, service_name=beacon_node_service_name
-    )
-    beacon_node_enr = response["extract.enr"]
-    beacon_multiaddr = response["extract.multiaddr"]
-    beacon_peer_id = response["extract.peer_id"]
+    beacon_node_enr = ""
+    beacon_multiaddr = ""
+    beacon_peer_id = ""
+
+    if MIN_PEERS > 0:
+        # TODO(old) add validator availability using the validator API: https://ethereum.github.io/beacon-APIs/?urls.primaryName=v1#/ValidatorRequiredApi | from eth2-merge-kurtosis-module
+        beacon_node_identity_recipe = GetHttpRequestRecipe(
+            endpoint="/eth/v1/node/identity",
+            port_id=HTTP_PORT_ID,
+            extract={
+                "enr": ".data.enr",
+                "multiaddr": ".data.discovery_addresses[0]",
+                "peer_id": ".data.peer_id",
+            },
+        )
+        response = plan.request(
+            recipe=beacon_node_identity_recipe, service_name=beacon_node_service_name
+        )
+        beacon_node_enr = response["extract.enr"]
+        beacon_multiaddr = response["extract.multiaddr"]
+        beacon_peer_id = response["extract.peer_id"]
 
     beacon_metrics_port = beacon_service.ports[BEACON_MONITORING_PORT_ID]
     beacon_metrics_url = "{0}:{1}".format(
